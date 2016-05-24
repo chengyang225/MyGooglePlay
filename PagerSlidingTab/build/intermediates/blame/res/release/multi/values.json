@@ -1,0 +1,19 @@
+[
+    {
+        "outputFile": "/Users/ChanIan/AndroidStudioProjects/MyGooglePlay/PagerSlidingTab/build/intermediates/res/merged/release/values/values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 58,
+                    "endOffset": 109
+                },
+                "from": {
+                    "file": "/Users/ChanIan/AndroidStudioProjects/MyGooglePlay/PagerSlidingTab/res/values/colors.xml"
+                }
+            }
+        ]
+    }
+]
