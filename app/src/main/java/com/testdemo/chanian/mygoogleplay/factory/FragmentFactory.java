@@ -2,6 +2,7 @@ package com.testdemo.chanian.mygoogleplay.factory;
 
 import android.support.v4.app.Fragment;
 
+import com.testdemo.chanian.mygoogleplay.base.BaseFragment;
 import com.testdemo.chanian.mygoogleplay.fragment.AppFragment;
 import com.testdemo.chanian.mygoogleplay.fragment.CateFragment;
 import com.testdemo.chanian.mygoogleplay.fragment.GameFragment;
@@ -10,9 +11,13 @@ import com.testdemo.chanian.mygoogleplay.fragment.HotFragment;
 import com.testdemo.chanian.mygoogleplay.fragment.RecommFragment;
 import com.testdemo.chanian.mygoogleplay.fragment.SubjFragment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ChanIan on 16/5/24.
  */
+//专门生产fragment的工厂
 public class FragmentFactory {
 //    <item>首页</item>
 //    <item>应用</item>
@@ -28,9 +33,15 @@ public class FragmentFactory {
     public static final int RECOFRAGMENT=4;
     public static final int CATEFRAGMENT=5;
     public static final int HOTFRAGMENT=6;
-    public static Fragment getFragment(int resId){
-        Fragment fragment=null;
-        switch (resId) {
+    //将所有页面装进集合中
+    public static Map<Integer,BaseFragment> mBaseFragmentMap=new HashMap<>();
+    public static BaseFragment getFragment(int position){
+        //判断如果集合中有该页面就不用创建了
+        if(mBaseFragmentMap.containsKey(position)) {
+            return mBaseFragmentMap.get(position);
+        }
+        BaseFragment fragment=null;
+        switch (position) {
             case HOMEFRAGMENT :
                 fragment=new HomeFragment();
                 break;
@@ -53,6 +64,7 @@ public class FragmentFactory {
                 fragment=new HotFragment();
                 break;
         }
+        mBaseFragmentMap.put(position,fragment);
         return fragment;
     }
 }
