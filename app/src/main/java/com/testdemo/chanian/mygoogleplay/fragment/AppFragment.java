@@ -1,41 +1,58 @@
 package com.testdemo.chanian.mygoogleplay.fragment;
 
-import android.graphics.Color;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.testdemo.chanian.mygoogleplay.base.BaseFragment;
+import com.testdemo.chanian.mygoogleplay.base.ItemAdapter;
 import com.testdemo.chanian.mygoogleplay.base.LoadingPage;
-import com.testdemo.chanian.mygoogleplay.utils.UIUtils;
+import com.testdemo.chanian.mygoogleplay.bean.ItemInfoBean;
+import com.testdemo.chanian.mygoogleplay.factory.ListViewFactory;
+import com.testdemo.chanian.mygoogleplay.protocol.AppProtocol;
 
-import java.util.Random;
+import java.util.List;
 
 
 public class AppFragment extends BaseFragment {
 
-    @Override
-    protected View initSuccessView() {
-        TextView tv=new TextView(UIUtils.getContext());
-        tv.setGravity(Gravity.CENTER);
-        tv.setTextColor(Color.RED);
-        tv.setText(this.getClass().getSimpleName());
-        return tv;
-    }
+    private AppProtocol mAppProtocol;
+    private List<ItemInfoBean> mItemBeen;
 
     @Override
-    protected LoadingPage.LoadDataState initData() {
-        //模拟网络请求,延时两秒
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //随机返回一种状态
-        LoadingPage.LoadDataState[] states={LoadingPage.LoadDataState.SUCCESS, LoadingPage.LoadDataState.EMPTY
-                , LoadingPage.LoadDataState.ERROR};
-        Random random = new Random();
-        int index = random.nextInt(3);
-        return states[index];
+    protected View initSuccessView() {
+        ListView listview = ListViewFactory.getListview();
+        listview.setAdapter(new AppAdapter(mItemBeen,listview));
+        return listview;
     }
+    //初始化数据
+    @Override
+    protected LoadingPage.LoadDataState initData() {
+        mAppProtocol = new AppProtocol();
+        try {
+            mItemBeen = mAppProtocol.loadData(0);
+            return checkLoadData(mItemBeen);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LoadingPage.LoadDataState.ERROR;
+        }
+    }
+    private class AppAdapter extends ItemAdapter{
+        public AppAdapter(List datas, ListView lv) {
+            super(datas, lv);
+        }
+
+        //加载更多数据
+        @Override
+        protected List<ItemInfoBean> loadMoreData() {
+            try {
+                Thread.sleep(1000);
+                List<ItemInfoBean> itemBeen = mAppProtocol.loadData(mDatas.size());
+                return itemBeen;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return super.loadMoreData();
+        }
+    }
+
 }

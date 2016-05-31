@@ -1,70 +1,82 @@
 package com.testdemo.chanian.mygoogleplay.fragment;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.testdemo.chanian.mygoogleplay.base.BaseFragment;
-import com.testdemo.chanian.mygoogleplay.base.BaseHolder;
+import com.testdemo.chanian.mygoogleplay.base.ItemAdapter;
 import com.testdemo.chanian.mygoogleplay.base.LoadingPage;
-import com.testdemo.chanian.mygoogleplay.base.SuperBaseAdapter;
-import com.testdemo.chanian.mygoogleplay.holder.HomeHolder;
-import com.testdemo.chanian.mygoogleplay.utils.UIUtils;
+import com.testdemo.chanian.mygoogleplay.bean.HomeInfoBean;
+import com.testdemo.chanian.mygoogleplay.bean.ItemInfoBean;
+import com.testdemo.chanian.mygoogleplay.factory.ListViewFactory;
+import com.testdemo.chanian.mygoogleplay.holder.AdHolder;
+import com.testdemo.chanian.mygoogleplay.protocol.HomeProtocol;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class HomeFragment extends BaseFragment {
 
-    private List<String> mDatas;
+    private List<ItemInfoBean> mDatas;
+    private HomeProtocol mProtocol;
+    private ListView mLv;
+    private List<String> mPictures;
 
     @Override
     protected View initSuccessView() {
-
-        ListView lv = new ListView(UIUtils.getContext());
-        lv.setBackgroundColor(Color.CYAN);
-        lv.setAdapter(new MyAdapter(mDatas));
-        return lv;
+        mLv = ListViewFactory.getListview();
+        AdHolder holder = new AdHolder();
+        //添加广告页面
+        mLv.addHeaderView(holder.mView);
+        holder.refreshView(mPictures);
+        mLv.setAdapter(new MyAdapter(mDatas, mLv));
+        return mLv;
     }
 
     @Override
     protected LoadingPage.LoadDataState initData() {
-        //模拟网络请求,延时两秒
+        mProtocol = new HomeProtocol();
         try {
-            mDatas = new ArrayList();
-            for (int i = 0; i < 50; i++) {
-                mDatas.add("hehe" + i);
+            HomeInfoBean homeInfoBean = mProtocol.loadData(0);
+            //判断返回的数据
+            LoadingPage.LoadDataState state = checkLoadData(homeInfoBean);
+            if (state != LoadingPage.LoadDataState.SUCCESS) {
+                return state;
             }
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
+            state = checkLoadData(homeInfoBean.list);
+            if (state != LoadingPage.LoadDataState.SUCCESS) {
+                return state;
+            }
+            mDatas = homeInfoBean.list;
+            mPictures = homeInfoBean.picture;
+            return LoadingPage.LoadDataState.SUCCESS;
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-//        //随机返回一种状态
-//        LoadingPage.LoadDataState[] states = {LoadingPage.LoadDataState.SUCCESS, LoadingPage.LoadDataState.EMPTY
-//                , LoadingPage.LoadDataState.ERROR};
-//        Random random = new Random();
-//        int index = random.nextInt(3);
-        return LoadingPage.LoadDataState.SUCCESS;
-    }
-
-    private class ViewHolder {
-        TextView tv1;
-        TextView tv2;
-    }
-
-    private class MyAdapter extends SuperBaseAdapter{
-
-        public MyAdapter(List datas) {
-            super(datas);
+            return LoadingPage.LoadDataState.ERROR;
         }
 
+    }
+
+
+    private class MyAdapter extends ItemAdapter {
+
+        public MyAdapter(List datas, ListView lv) {
+            super(datas, lv);
+        }
+
+        //加载更多数据
         @Override
-        public BaseHolder getHolder() {
-            return new HomeHolder();
+        protected List<ItemInfoBean> loadMoreData() {
+            try {
+                Thread.sleep(1000);
+                HomeInfoBean infoBean = mProtocol.loadData(mDatas.size());
+                return infoBean.list;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
+
+
     }
-
-
 }

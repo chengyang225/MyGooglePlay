@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Process;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ChanIan on 16/5/24.
  */
@@ -14,6 +17,12 @@ public class MyApplication extends Application {
     private static Handler mHandler;
     private static Context mContext;
     private static int mMainThreadId;
+    private Map<String,String> key=new HashMap<>();//存在内存中的关键字
+
+    public Map<String, String> getKey() {
+        return key;
+    }
+
     //获取唯一handler
     public static Handler getmHandler() {
         return mHandler;

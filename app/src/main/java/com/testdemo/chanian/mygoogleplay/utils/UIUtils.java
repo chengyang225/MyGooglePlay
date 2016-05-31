@@ -27,29 +27,44 @@ public class UIUtils {
     }
 
     //得到字符串
-    public static String getString(int resId) {
-        return getResources().getString(resId);
+    public static String getString(int resId,Object...obj) {
+        return getResources().getString(resId,obj);
     }
 
     //得到字符数组
     public static String[] getStringArray(int resId) {
         return getResources().getStringArray(resId);
     }
+
     //得到包名
     public static String getPackageName() {
         return getContext().getPackageName();
     }
+
     //安全处理刷新等问题
-    public static void postTaskSafely(Runnable task){
+    public static void postTaskSafely(Runnable task) {
         //得到当前线程id
         int currentId = Process.myTid();
         //得到主线程id
         int mainThreadId = MyApplication.getmMainThreadId();
-        if(currentId==mainThreadId) {//当前线程为主线程
+        if (currentId == mainThreadId) {//当前线程为主线程
             task.run();
-        }else {//当前线程为子线程
+        } else {//当前线程为子线程
             Handler handler = getHandler();
             handler.post(task);
         }
+    }
+
+    //px转dp
+    public static int px2Dp(int px) {
+        float density = 1.5f;
+        float radio = getResources().getDisplayMetrics().density;
+        int dp = (int) (px *density + .5f);
+        return dp;
+
+    }
+
+    public static int getColor(int resId) {
+        return getResources().getColor(resId);
     }
 }

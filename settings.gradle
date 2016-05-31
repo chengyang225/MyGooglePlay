@@ -1,1 +1,1 @@
-include ':app', 'PagerSlidingTab'
+include ':app'
