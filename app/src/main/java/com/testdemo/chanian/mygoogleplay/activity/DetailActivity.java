@@ -16,6 +16,8 @@ import com.testdemo.chanian.mygoogleplay.holder.DetailDesHolder;
 import com.testdemo.chanian.mygoogleplay.holder.DetailPicHolder;
 import com.testdemo.chanian.mygoogleplay.holder.DetailSafeHolder;
 import com.testdemo.chanian.mygoogleplay.holder.DetailTitleHolder;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadInfo;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadManager;
 import com.testdemo.chanian.mygoogleplay.protocol.DetailProtocol;
 import com.testdemo.chanian.mygoogleplay.utils.UIUtils;
 
@@ -41,6 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     private String mPackName;
     private DetailProtocol mProtocol;
     private ItemInfoBean mInfoBean;
+    private DetailButtonHolder mButtonHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,17 +71,19 @@ public class DetailActivity extends AppCompatActivity {
                 mDetailFlSafe.addView(safeHolder.mView);
                 safeHolder.setDataAndRefreshView(mInfoBean);
                 //截图
-                DetailPicHolder picHolder=new DetailPicHolder();
+                DetailPicHolder picHolder = new DetailPicHolder();
                 mDetailFlPic.addView(picHolder.mView);
                 picHolder.setDataAndRefreshView(mInfoBean);
                 //描述
-                DetailDesHolder desHolder=new DetailDesHolder();
+                DetailDesHolder desHolder = new DetailDesHolder();
                 mDetailFlDes.addView(desHolder.mView);
                 desHolder.setDataAndRefreshView(mInfoBean);
                 //下载,分享
-                DetailButtonHolder buttonHolder=new DetailButtonHolder();
-                mDetailFlBottom.addView(buttonHolder.mView);
-                buttonHolder.setDataAndRefreshView(mInfoBean);
+                mButtonHolder = new DetailButtonHolder();
+                //添加观察者
+                DownloadManager.getInstance().addObserver(mButtonHolder);
+                mDetailFlBottom.addView(mButtonHolder.mView);
+                mButtonHolder.setDataAndRefreshView(mInfoBean);
                 return view;
             }
         };
@@ -89,6 +94,29 @@ public class DetailActivity extends AppCompatActivity {
 
         page.triggleData();
 
+    }
+
+    //失去焦点时解除绑定
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mButtonHolder != null) {
+            DownloadManager.getInstance().removeObsever(mButtonHolder);
+
+
+        }
+    }
+
+    //获取焦点时重新绑定
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mButtonHolder != null) {
+            DownloadManager.getInstance().addObserver(mButtonHolder);
+            //手动发布最新状态
+            DownloadInfo downloadInfo = DownloadManager.getInstance().getDownloadInfo(mInfoBean);
+            DownloadManager.getInstance().notifyObsever(downloadInfo);
+        }
     }
 
     //加载数据

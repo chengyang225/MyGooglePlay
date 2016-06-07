@@ -29,16 +29,16 @@ import okhttp3.Response;
  */
 public abstract class BaseProtocol<T> {
     public T loadData(int index) throws Exception {
-//        //从内存中获取
-//        T t = getDataFromMem(index);
-//        if (t != null) {
-//            return t;
-//
-//        }
-//       t = getDataFromDisk(index);
-//        if (t != null){
-//            return t;
-//        }
+        //从内存中获取
+        T t = getDataFromMem(index);
+        if (t != null) {
+            return t;
+
+        }
+       t = getDataFromDisk(index);
+        if (t != null){
+            return t;
+        }
 
 
         return getDataFromNet(index);
