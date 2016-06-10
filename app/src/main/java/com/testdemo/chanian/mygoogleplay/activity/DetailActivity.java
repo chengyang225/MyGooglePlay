@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.testdemo.chanian.mygoogleplay.R;
 import com.testdemo.chanian.mygoogleplay.base.LoadingPage;
@@ -20,6 +21,10 @@ import com.testdemo.chanian.mygoogleplay.manage.DownloadInfo;
 import com.testdemo.chanian.mygoogleplay.manage.DownloadManager;
 import com.testdemo.chanian.mygoogleplay.protocol.DetailProtocol;
 import com.testdemo.chanian.mygoogleplay.utils.UIUtils;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,6 +49,8 @@ public class DetailActivity extends AppCompatActivity {
     private DetailProtocol mProtocol;
     private ItemInfoBean mInfoBean;
     private DetailButtonHolder mButtonHolder;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +110,7 @@ public class DetailActivity extends AppCompatActivity {
         if (mButtonHolder != null) {
             DownloadManager.getInstance().removeObsever(mButtonHolder);
 
-
+            
         }
     }
 
@@ -152,4 +159,6 @@ public class DetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

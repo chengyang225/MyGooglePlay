@@ -32,11 +32,13 @@ public abstract class BaseProtocol<T> {
         //从内存中获取
         T t = getDataFromMem(index);
         if (t != null) {
+            Log.v("ian", "从内存获取数据");
             return t;
 
         }
        t = getDataFromDisk(index);
         if (t != null){
+            Log.v("ian", "从本地获取数据");
             return t;
         }
 
@@ -44,37 +46,7 @@ public abstract class BaseProtocol<T> {
         return getDataFromNet(index);
 
     }
-
-    private T getDataFromDisk(int index)  {
-        BufferedReader reader=null;
-        try {
-            //从本地获取
-            String dir = FileUtils.getDir("json");
-            String key = generateKey(index);
-            File file =  new File(dir, key);
-            if(file.exists()) {//本地有缓存
-                reader=new BufferedReader(new FileReader(file));
-                String oldTime = reader.readLine();
-                long newTime = new Date().getTime();
-                if(newTime-Long.parseLong(oldTime)<= Constants.PERIOD) {
-                    String jsonString = reader.readLine();//本地的缓存
-                    T t = parseJson(jsonString);
-                    //存到内存
-                    MyApplication app = (MyApplication) UIUtils.getContext();
-                    Map<String, String> keyMap = app.getKey();
-                    keyMap.put(generateKey(index),jsonString);
-                    return t;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //关流
-            IOUtils.close(reader);
-        }
-        return null;
-    }
-
+    //从内存获取
     private T getDataFromMem(int index) {
         try {
             //从内存中获取资源
@@ -92,6 +64,38 @@ public abstract class BaseProtocol<T> {
         }
         return null;
     }
+    private T getDataFromDisk(int index)  {
+        BufferedReader reader=null;
+        try {
+            //从本地获取
+            String dir = FileUtils.getDir("json");
+            String key = generateKey(index);
+            File file =  new File(dir, key);
+            if(file.exists()) {//本地有缓存
+                reader=new BufferedReader(new FileReader(file));
+                String oldTime = reader.readLine();
+                long newTime = new Date().getTime();
+                Log.v("ian", "time:"+newTime);
+                if(newTime-Long.parseLong(oldTime)<= Constants.PERIOD) {
+                    String jsonString = reader.readLine();//本地的缓存
+                    T t = parseJson(jsonString);
+                    //存到内存
+                    MyApplication app = (MyApplication) UIUtils.getContext();
+                    Map<String, String> keyMap = app.getKey();
+                    keyMap.put(key,jsonString);
+                    return t;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //关流
+            IOUtils.close(reader);
+        }
+        return null;
+    }
+
+
 
     //生成唯一key
     private String generateKey(int index) {
@@ -128,15 +132,24 @@ public abstract class BaseProtocol<T> {
                 T t = parseJson(jsonString);
 
                 //存到内存
+                Log.v("ian", "存数据到内存");
                 MyApplication app = (MyApplication) UIUtils.getContext();
                 Map<String, String> keyMap = app.getKey();
                 keyMap.put(generateKey(index),jsonString);
                 //写到本地
+                Log.v("ian", "存数据到本地");
                 String dir = FileUtils.getDir(generateKey(index));
                 File file = new File(dir, generateKey(index));
                 writer = new BufferedWriter(new FileWriter(file));
                 writer.write(String.valueOf(new Date().getTime()));
                 writer.newLine();;
+                //去掉换行和空格
+                if(jsonString.contains("\r\n")) {
+                    jsonString.replaceAll("\r\n","");
+                }
+                if(jsonString.contains(" ")) {
+                    jsonString.replaceAll(" ","");
+                }
                 writer.write(jsonString);
                 return t;
             }

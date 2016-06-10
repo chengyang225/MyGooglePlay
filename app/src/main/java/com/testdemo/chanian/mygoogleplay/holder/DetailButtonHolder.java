@@ -3,6 +3,7 @@ package com.testdemo.chanian.mygoogleplay.holder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.testdemo.chanian.mygoogleplay.R;
 import com.testdemo.chanian.mygoogleplay.base.BaseHolder;
@@ -12,8 +13,12 @@ import com.testdemo.chanian.mygoogleplay.manage.DownloadManager;
 import com.testdemo.chanian.mygoogleplay.utils.CommonUtils;
 import com.testdemo.chanian.mygoogleplay.utils.UIUtils;
 import com.testdemo.chanian.mygoogleplay.views.ProgressButton;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.io.File;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -178,4 +183,31 @@ public class DetailButtonHolder extends BaseHolder<ItemInfoBean> implements Down
             }
         });
     }
+
+
+
+    @OnClick(R.id.app_detail_download_btn_share)
+    public void shareClick(){
+
+        SHARE_MEDIA platform = SHARE_MEDIA.SINA;
+//        UMShareAPI.get(UIUtils.getContext()).doOauthVerify(, platform, umAuthListener);
+    }
+
+
+    private UMAuthListener umAuthListener = new UMAuthListener() {
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+            Toast.makeText( UIUtils.getContext(), "Authorize succeed", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
+            Toast.makeText( UIUtils.getContext(), "Authorize fail", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int action) {
+            Toast.makeText( UIUtils.getContext(), "Authorize cancel", Toast.LENGTH_SHORT).show();
+        }
+    };
 }

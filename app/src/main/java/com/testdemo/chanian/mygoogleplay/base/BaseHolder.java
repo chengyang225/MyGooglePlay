@@ -8,7 +8,7 @@ import android.view.View;
 //所有holder的基类
 public abstract class BaseHolder<ITEMBEANTYPE> {
     public View mView;//加载的布局
-    private ITEMBEANTYPE mData;//需绑定的数据
+    public ITEMBEANTYPE mData;//需绑定的数据
 
     public BaseHolder() {
         mView=initView();

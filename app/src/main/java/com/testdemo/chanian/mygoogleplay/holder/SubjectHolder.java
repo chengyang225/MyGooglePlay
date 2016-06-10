@@ -33,6 +33,7 @@ public class SubjectHolder extends BaseHolder<SubjectBean> {
     @Override
     protected void refreshView(SubjectBean data) {
         mItemSubjectTvTitle.setText(data.des);
+
         Picasso.with(UIUtils.getContext()).load(Constants.HttpUrl.IMAGEURL+data.url).into(mItemSubjectIvIcon);
     }
 }

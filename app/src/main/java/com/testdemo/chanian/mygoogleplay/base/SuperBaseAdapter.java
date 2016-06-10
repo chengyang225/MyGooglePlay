@@ -21,9 +21,11 @@ public abstract class SuperBaseAdapter<ITEMBEANTYPE> extends MyBaseAdapter imple
     private LoadMoreHolder mLoadMoreHolder;
     private LoadMoreDataTask mLoadMoreDataTask;
     private int mState;
+    private ListView mListView;
 
     public SuperBaseAdapter(List datas, ListView lv) {
         super(datas);
+        mListView=lv;
         lv.setOnItemClickListener(this);
     }
 
@@ -104,7 +106,8 @@ public abstract class SuperBaseAdapter<ITEMBEANTYPE> extends MyBaseAdapter imple
     //点击错误页面重新刷新页面
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        //处理移位情况
+        position=position-mListView.getHeaderViewsCount();
         if(getItemViewType(position)==TYPE_LOAD_MORE) {//先判断是加载更多情况
             if(mState==LoadMoreHolder.LOADING_ERROR) {//加载错误的时候
                 triggerData();//重新加载

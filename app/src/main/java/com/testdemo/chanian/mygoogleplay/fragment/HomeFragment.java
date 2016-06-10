@@ -10,6 +10,9 @@ import com.testdemo.chanian.mygoogleplay.bean.HomeInfoBean;
 import com.testdemo.chanian.mygoogleplay.bean.ItemInfoBean;
 import com.testdemo.chanian.mygoogleplay.factory.ListViewFactory;
 import com.testdemo.chanian.mygoogleplay.holder.AdHolder;
+import com.testdemo.chanian.mygoogleplay.holder.ItemHolder;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadInfo;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadManager;
 import com.testdemo.chanian.mygoogleplay.protocol.HomeProtocol;
 
 import java.util.List;
@@ -21,6 +24,7 @@ public class HomeFragment extends BaseFragment {
     private HomeProtocol mProtocol;
     private ListView mLv;
     private List<String> mPictures;
+    private MyAdapter mAdapter;
 
     @Override
     protected View initSuccessView() {
@@ -29,7 +33,8 @@ public class HomeFragment extends BaseFragment {
         //添加广告页面
         mLv.addHeaderView(holder.mView);
         holder.refreshView(mPictures);
-        mLv.setAdapter(new MyAdapter(mDatas, mLv));
+        mAdapter = new MyAdapter(mDatas, mLv);
+        mLv.setAdapter(mAdapter);
         return mLv;
     }
 
@@ -78,5 +83,31 @@ public class HomeFragment extends BaseFragment {
         }
 
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mAdapter!=null) {
+            List<ItemHolder> holders = mAdapter.mItemHolders;
+            //失去焦点时移除观察者
+            for (ItemHolder holder :holders){
+                DownloadManager.getInstance().removeObsever(holder);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter!=null) {
+            List<ItemHolder> holders = mAdapter.mItemHolders;
+            //获得焦点时添加观察者并通知界面更新
+            for (ItemHolder holder :holders){
+                DownloadManager.getInstance().addObserver(holder);
+                DownloadInfo downloadInfo = DownloadManager.getInstance().getDownloadInfo(holder.mData);
+                DownloadManager.getInstance().notifyObsever(downloadInfo);
+            }
+        }
     }
 }

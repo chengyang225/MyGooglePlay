@@ -8,6 +8,9 @@ import com.testdemo.chanian.mygoogleplay.base.ItemAdapter;
 import com.testdemo.chanian.mygoogleplay.base.LoadingPage;
 import com.testdemo.chanian.mygoogleplay.bean.ItemInfoBean;
 import com.testdemo.chanian.mygoogleplay.factory.ListViewFactory;
+import com.testdemo.chanian.mygoogleplay.holder.ItemHolder;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadInfo;
+import com.testdemo.chanian.mygoogleplay.manage.DownloadManager;
 import com.testdemo.chanian.mygoogleplay.protocol.GameProtocol;
 
 import java.util.List;
@@ -17,11 +20,13 @@ public class GameFragment extends BaseFragment {
 
     private GameProtocol mGameProtocol;
     private List<ItemInfoBean> mItemBeen;
+    private GameAdapter mAdapter;
 
     @Override
     protected View initSuccessView() {
         ListView listview = ListViewFactory.getListview();
-        listview.setAdapter(new GameAdapter(mItemBeen,listview));
+        mAdapter = new GameAdapter(mItemBeen, listview);
+        listview.setAdapter(mAdapter);
         return listview;
     }
     //初始化数据
@@ -51,6 +56,31 @@ public class GameFragment extends BaseFragment {
                 e.printStackTrace();
             }
             return super.loadMoreData();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mAdapter!=null) {
+            List<ItemHolder> holders = mAdapter.mItemHolders;
+            //失去焦点时移除观察者
+            for (ItemHolder holder :holders){
+                DownloadManager.getInstance().removeObsever(holder);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter!=null) {
+            List<ItemHolder> holders = mAdapter.mItemHolders;
+            //获得焦点时添加观察者并通知界面更新
+            for (ItemHolder holder :holders){
+                DownloadManager.getInstance().addObserver(holder);
+                DownloadInfo downloadInfo = DownloadManager.getInstance().getDownloadInfo(holder.mData);
+                DownloadManager.getInstance().notifyObsever(downloadInfo);
+            }
         }
     }
 }

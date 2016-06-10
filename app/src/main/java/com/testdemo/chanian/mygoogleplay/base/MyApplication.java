@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Process;
 
+import com.umeng.socialize.PlatformConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,5 +44,8 @@ public class MyApplication extends Application {
         mHandler = new Handler();
         mContext = getApplicationContext();
         mMainThreadId = Process.myTid();
+        PlatformConfig.setSinaWeibo("3218384792","d8a79b3adea1729c8a4b3675a5e707a5");
     }
+
+
 }

@@ -145,7 +145,6 @@ public class DownloadManager {
         ///////////////////////////////////////////////////////////////////////////
         // 状态:暂停下载 STATE_PAUSEDOWNLOAD
         ///////////////////////////////////////////////////////////////////////////
-        Log.v("ian", "STATE_PAUSEDOWNLOAD:DownloadManager");
         downloadInfo.curState = STATE_PAUSEDOWNLOAD;
         notifyObsever(downloadInfo);
     }

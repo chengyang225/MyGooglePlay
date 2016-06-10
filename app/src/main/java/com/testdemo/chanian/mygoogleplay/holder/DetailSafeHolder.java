@@ -3,6 +3,7 @@ package com.testdemo.chanian.mygoogleplay.holder;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,12 +51,14 @@ public class DetailSafeHolder extends BaseHolder<ItemInfoBean> implements View.O
             //设置图片标签
             ImageView imageView = new ImageView(UIUtils.getContext());
             Picasso.with(UIUtils.getContext()).load(Constants.HttpUrl.IMAGEURL+safeUrl).into(imageView);
+//            Log.v("ian", "img:"+Constants.HttpUrl.IMAGEURL+safeUrl);
             //将图片加入容器
             mAppDetailSafePicContainer.addView(imageView);
 
             //设置文字描述
             TextView textView = new TextView(UIUtils.getContext());
-            textView.setGravity(Gravity.CENTER);
+//            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(14);
             int padding=UIUtils.px2Dp(4);
             textView.setPadding(padding,padding,padding,padding);
             ImageView arrowIcon = new ImageView(UIUtils.getContext());
